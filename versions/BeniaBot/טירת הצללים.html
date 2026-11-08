@@ -259,10 +259,28 @@ body.touch .paper{max-height:92vh;overflow:auto;-webkit-overflow-scrolling:touch
 body.touch .paper{scrollbar-width:none}body.touch .paper::-webkit-scrollbar{display:none}
 #note .paper{max-height:94vh;overflow:auto;scrollbar-width:thin}
 @media (max-height: 820px){ #note .paper p{font-size:26px} #note .paper .hint{font-size:23px} }
+#loading .lerr{max-width:min(520px,88vw);display:grid;gap:8px;justify-items:center}
+#loading .lerr strong{font-size:22px;color:#e8c9a0}
+#loading .lerr p{margin:0;font-size:16.5px;line-height:1.6;color:var(--dim)}
+#loading .lerr code{direction:ltr;font-size:12.5px;color:var(--faint);background:rgba(255,255,255,.05);padding:4px 8px;border-radius:4px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#loading .lretry{margin-top:6px;padding:10px 22px;border-radius:999px;border:1px solid rgba(233,220,198,.35);background:rgba(255,255,255,.04);color:var(--ink);font:700 17px var(--serif);cursor:pointer}
+#noscript{position:fixed;inset:0;z-index:300;display:grid;place-content:center;gap:10px;text-align:center;padding:24px;background:#050304;color:#e9dcc6;font-size:19px;line-height:1.6}
+#noscript b{font-size:44px;color:#cdbb9c}
 
 </style></head><body>
 <div id="loading" role="status" aria-live="polite"><b>טירת הצללים</b><div class="lbar"><i id="lbarFill"></i></div><span id="lpct">נפתח…</span><small>בפעם הראשונה ההורדה לוקחת קצת זמן: זו טירה שלמה בקובץ אחד.<br>קובץ ששמור במחשב נפתח מיד.</small></div>
-<script>window.__boot=function(p,t){var f=document.getElementById("lbarFill"),s=document.getElementById("lpct");if(f)f.style.width=(p*100).toFixed(1)+"%";if(s)s.textContent=t||("נטען "+Math.round(p*100)+"%");};</script>
+<script>window.__boot=function(p,t){var f=document.getElementById("lbarFill"),s=document.getElementById("lpct");if(f)f.style.width=(p*100).toFixed(1)+"%";if(s)s.textContent=t||("נטען "+Math.round(p*100)+"%");};
+window.__failed=false;
+window.__fail=function(title,body,detail){if(window.__failed)return;window.__failed=true;var L=document.getElementById("loading");if(!L)return;L.className="";
+L.innerHTML='<b>טירת הצללים</b><div class="lerr"><strong></strong><p></p><code></code></div><button type="button" class="lretry">לנסות שוב</button>';
+L.querySelector("strong").textContent=title;L.querySelector("p").textContent=body;var c=L.querySelector("code");if(detail)c.textContent=detail;else c.remove();
+L.querySelector(".lretry").onclick=function(){location.reload();};};
+window.addEventListener("error",function(e){if(window.__ready)return;window.__fail("המשחק לא הצליח לעלות על המחשב הזה","משהו השתבש בזמן שהמשחק עלה. אפשר לנסות שוב, ואם זה חוזר, לפתוח את הקובץ בדפדפן אחר או מעודכן יותר.",e.message||"");});
+window.addEventListener("unhandledrejection",function(e){if(window.__ready)return;window.__fail("המשחק לא הצליח לעלות על המחשב הזה","משהו השתבש בזמן שהמשחק עלה. אפשר לנסות שוב, ואם זה חוזר, לפתוח את הקובץ בדפדפן אחר או מעודכן יותר.",(e.reason&&e.reason.message)||String(e.reason||""));});
+(function(){try{var c=document.createElement("canvas");if(!(window.WebGLRenderingContext&&(c.getContext("webgl2")||c.getContext("webgl"))))window.__fail("המחשב הזה לא מציג גרפיקה תלת־ממדית","המשחק צריך גרפיקה תלת־ממדית, והדפדפן או כרטיס המסך כאן לא מאפשרים אותה. מה אפשר לעשות: לעדכן את הדפדפן, ובהגדרות שלו לוודא שהאצת החומרה מופעלת.","");}catch(e){}})();
+document.addEventListener("DOMContentLoaded",function(){setTimeout(function(){if(window.__ready||window.__failed)return;var s=document.getElementById("lpct");if(s)s.textContent="זה לוקח יותר מהרגיל. במחשבים חלשים העלייה הראשונה יכולה לקחת עד דקה.";},40000);});
+</script>
+<noscript><div id="noscript"><b>טירת הצללים</b><p>הקובץ נפתח בתוכנה שלא מריצה משחקים, למשל תצוגה מקדימה של קבצים בטלפון או במייל.</p><p>כדי לשחק: שומרים את הקובץ, ופותחים אותו בדפדפן אינטרנט רגיל.</p></div></noscript>
 <div id="stage"></div>
 
 <div id="hud" class="hidden">
@@ -4031,7 +4049,7 @@ async function boot() {
   floors.forEach((f, i) => f.g.visible = i === 1); tenant.mesh.visible = librarian.mesh.visible = ghost.mesh.visible = watcher.mesh.visible = false;
   const F = floors[1]; P.x = F.start.x; P.z = F.start.z; P.yaw = 0;
   applyFloorLook(1);
-  hide('loading'); ready = true;
+  hide('loading'); ready = true; window.__ready = true;
   if (hasSave()) show('bContinue');
   if (DEV) window.G = { GS, P, floors, tenant, librarian, goFloor, die, sfx, radio, beat: { beatFinale, beatC7, beatT3, beatOpening }, setFlags: o => Object.assign(GS.flags, o),
     tp(f, c, r, yaw = 0, pitch = 0) { GS.floor = f; floors.forEach((x, i) => x.g.visible = i === f); applyFloorLook(f); setAmbience(f); P.x = c * S; P.z = r * S; P.yaw = yaw; P.pitch = pitch; P.vx = P.vz = 0; updateFlamePositions(floors[f], true); return 'ok'; } };
@@ -4150,7 +4168,7 @@ function loop() {
 }
 let breathT2 = false;
 addEventListener('resize', () => { clearTimeout(window._rs); window._rs = setTimeout(applyQuality, 120); });
-boot().then(() => loop()).catch(e => { $('loading').textContent = 'שגיאה בטעינה: ' + e.message; console.error(e); });
+boot().then(() => loop()).catch(e => { console.error(e); window.__fail('המשחק לא הצליח לעלות על המחשב הזה', 'משהו השתבש בזמן שהמשחק עלה. אפשר לנסות שוב, ואם זה חוזר, לפתוח את הקובץ בדפדפן אחר או מעודכן יותר.', (e && e.message) || String(e)); });
 
 </script>
 </body></html>
