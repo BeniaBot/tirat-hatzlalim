@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>טירת הצללים · הגרסאות</title>
+<meta name="description" content="משחק אימה בקובץ אחד. כל שומר לילה מביא את הגרסה שלו.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&family=Suez+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0706; --ink:#e9dcc6; --dim:#a8977f; --faint:#6d5f4f; --line:rgba(233,220,198,.14);
+    --card:rgba(24,17,13,.72); --gold:#ffcf86; --blood:#8a1414; --blood-hi:#c42a1f;
+    --mx:50vw; --my:30vh;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Frank Ruhl Libre',serif;-webkit-font-smoothing:antialiased}
+  body{min-height:100vh;overflow-x:hidden}
+  /* the flashlight: the page is dark, and the light follows you */
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(520px circle at var(--mx) var(--my),rgba(255,214,150,.13),rgba(255,214,150,.04) 40%,transparent 70%),
+               radial-gradient(1200px 600px at 50% -10%,rgba(120,20,14,.28),transparent 70%)}
+  body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.07;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  main{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:72px 20px 80px}
+  header{text-align:center;margin-bottom:56px}
+  h1{font-family:'Suez One',serif;font-weight:400;font-size:clamp(52px,9vw,104px);line-height:1;margin:0;letter-spacing:.01em;
+     text-shadow:0 0 40px rgba(196,42,31,.35),0 2px 0 #000}
+  .sub{margin:16px auto 0;max-width:560px;color:var(--dim);font-size:clamp(17px,2.2vw,20px);line-height:1.6}
+  .sub b{color:var(--ink);font-weight:700}
+
+  h2{font-family:'Suez One',serif;font-weight:400;font-size:28px;margin:0 0 18px;display:flex;align-items:center;gap:12px}
+  h2::after{content:'';flex:1;height:1px;background:var(--line)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px}
+  .card{position:relative;padding:22px 22px 20px;border:1px solid var(--line);border-radius:14px;background:var(--card);
+        backdrop-filter:blur(3px);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;overflow:hidden}
+  .card:hover{transform:translateY(-3px);border-color:rgba(255,207,134,.35);box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 0 1px rgba(255,207,134,.08) inset}
+  .card::before{content:'';position:absolute;inset:-1px;border-radius:14px;pointer-events:none;opacity:0;transition:opacity .3s;
+        background:radial-gradient(240px circle at var(--cx,50%) var(--cy,0%),rgba(255,207,134,.12),transparent 70%)}
+  .card:hover::before{opacity:1}
+  .who{font-size:14px;color:var(--faint);letter-spacing:.04em}
+  .who b{color:var(--gold);font-weight:700}
+  .name{font-size:25px;font-weight:900;margin:6px 0 4px;line-height:1.25;word-break:break-word}
+  .meta{font-size:14px;color:var(--dim)}
+  .actions{display:flex;gap:10px;margin-top:18px}
+  .btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;border-radius:10px;
+       font:700 17px 'Frank Ruhl Libre',serif;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:rgba(255,255,255,.03);
+       transition:background .2s,border-color .2s,transform .1s}
+  .btn:hover{background:rgba(255,255,255,.07);border-color:rgba(233,220,198,.3)}
+  .btn:active{transform:scale(.98)}
+  .btn.play{background:linear-gradient(#a3201a,#6e0f0c);border-color:#c42a1f;box-shadow:0 6px 22px rgba(160,24,18,.35)}
+  .btn.play:hover{background:linear-gradient(#b8261e,#7d120e)}
+  .btn svg{width:18px;height:18px;flex:none}
+
+  .state{padding:28px;border:1px dashed var(--line);border-radius:14px;color:var(--dim);text-align:center;line-height:1.7}
+
+  .how{margin-top:64px}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;counter-reset:s}
+  .step{padding:18px 18px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(24,17,13,.5);line-height:1.65;font-size:16.5px;color:var(--dim)}
+  .step::before{counter-increment:s;content:counter(s);display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;
+        background:rgba(255,207,134,.12);color:var(--gold);font-weight:900;margin-bottom:8px}
+  .step b{color:var(--ink)}
+  code{font-family:inherit;background:rgba(255,255,255,.06);border:1px solid var(--line);padding:1px 7px;border-radius:6px;color:var(--ink)}
+  .cta{display:flex;justify-content:center;margin-top:22px}
+  .cta .btn{flex:none;padding:13px 26px}
+  .note{margin-top:14px;text-align:center;font-size:14.5px;color:var(--faint);line-height:1.7}
+  footer{position:relative;z-index:1;text-align:center;color:var(--faint);font-size:14px;padding:0 20px 40px}
+  @media (max-width:520px){ main{padding-top:48px} .actions{flex-direction:column} }
+  @media (prefers-reduced-motion:reduce){ .card,.btn{transition:none} }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>טירת הצללים</h1>
+    <p class="sub">משחק אימה שלם בקובץ אחד, שעובד גם בלי אינטרנט.<br><b>כל שומר לילה מביא את הגרסה שלו.</b></p>
+  </header>
+
+  <section>
+    <h2>הגרסאות</h2>
+    <div id="list" class="grid"><div class="state">מדליקים את הפנס…</div></div>
+  </section>
+
+  <section class="how">
+    <h2>יש לך גרסה משלך?</h2>
+    <div class="steps">
+      <div class="step">לוחצים על <b>"העלאת גרסה"</b> למטה. צריך חשבון גיטהאב, וזה הכול.</div>
+      <div class="step">בשורת השם שמעל הקובץ כותבים <b>את השם שלכם ואחריו לוכסן</b>, למשל <code>משה/</code>, ואז גוררים פנימה את קובץ ה־HTML.</div>
+      <div class="step">למטה לוחצים <b>"Propose changes"</b> ואז <b>"Create pull request"</b>. אחרי אישור, הגרסה מופיעה כאן לבד.</div>
+    </div>
+    <div class="cta"><a class="btn play" id="upload" href="#" target="_blank" rel="noopener">העלאת גרסה</a></div>
+    <p class="note">קובץ HTML אחד לכל גרסה, עד 25 מגה. שם הקובץ הוא שם הגרסה שיופיע בדף.<br>גרסה חדשה באותו שם מחליפה את הקודמת.</p>
+  </section>
+</main>
+<footer>ההנהלה לא אחראית למה שקורה בגרסאות של אחרים. גם לא בשלנו.</footer>
+
+<script>
+(() => {
+  const OWNER = 'BeniaBot', REPO = 'tirat-hatzlalim', BRANCH = 'main', DIR = 'versions';
+  document.getElementById('upload').href = `https://github.com/${OWNER}/${REPO}/upload/${BRANCH}/${DIR}`;
+
+  // the light follows the pointer (and the card under it glows where you point)
+  addEventListener('pointermove', e => {
+    document.documentElement.style.setProperty('--mx', e.clientX + 'px');
+    document.documentElement.style.setProperty('--my', e.clientY + 'px');
+    const c = e.target.closest && e.target.closest('.card');
+    if (c) { const r = c.getBoundingClientRect(); c.style.setProperty('--cx', (e.clientX - r.left) + 'px'); c.style.setProperty('--cy', (e.clientY - r.top) + 'px'); }
+  }, { passive: true });
+
+  const enc = p => p.split('/').map(encodeURIComponent).join('/');
+  const mb = n => (n / 1048576).toFixed(1) + ' מגה';
+  const icon = {
+    play: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>',
+    dl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>'
+  };
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+
+  function render(files) {
+    const list = document.getElementById('list'); list.innerHTML = '';
+    if (!files.length) { list.appendChild(el('div', 'state', 'עדיין אין כאן גרסאות. אולי תהיה הראשון.')); return; }
+    // the original first, then everyone else by name
+    files.sort((a, b) => (a.who === OWNER ? -1 : b.who === OWNER ? 1 : a.who.localeCompare(b.who, 'he') || a.name.localeCompare(b.name, 'he')));
+    for (const f of files) {
+      const card = el('article', 'card');
+      const who = el('div', 'who'); who.append('הגרסה של '); who.appendChild(el('b', null, f.who)); card.appendChild(who);
+      card.appendChild(el('div', 'name', f.name));
+      card.appendChild(el('div', 'meta', mb(f.size)));
+      const act = el('div', 'actions');
+      const play = el('a', 'btn play'); play.href = enc(f.path); play.target = '_blank'; play.rel = 'noopener'; play.innerHTML = icon.play; play.append('לשחק');
+      const dl = el('a', 'btn'); dl.href = enc(f.path); dl.setAttribute('download', f.file); dl.innerHTML = icon.dl; dl.append('להורדה');
+      act.append(play, dl); card.appendChild(act); list.appendChild(card);
+    }
+  }
+
+  fetch(`https://api.github.com/repos/${OWNER}/${REPO}/git/trees/${BRANCH}?recursive=1`)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(d => render(d.tree.filter(t => t.type === 'blob' && t.path.startsWith(DIR + '/') && /\.html?$/i.test(t.path))
+      .map(t => { const parts = t.path.split('/'); const file = parts[parts.length - 1];
+        return { path: t.path, file, size: t.size, who: parts.length > 2 ? parts[1] : 'אלמוני', name: file.replace(/\.html?$/i, '') }; })))
+    .catch(() => { const list = document.getElementById('list'); list.innerHTML = '';
+      const s = el('div', 'state'); s.append('הרשימה לא נטענה כרגע. אפשר לראות את כל הגרסאות ישירות ');
+      const a = el('a', null, 'בתיקייה במאגר'); a.href = `https://github.com/${OWNER}/${REPO}/tree/${BRANCH}/${DIR}`; a.style.color = 'var(--gold)'; s.append(a, '.'); list.appendChild(s); });
+})();
+</script>
+</body>
+</html>
