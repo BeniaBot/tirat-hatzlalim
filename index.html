@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>טירת הצללים · אולם הציורים</title>
-<meta name="description" content="משחק אימה שלם בקובץ HTML אחד, וכל הגרסאות שלו תלויות על הקיר. כל ציור הוא גרסה.">
+<meta name="description" content="משחק אימה שלם בקובץ אחד, וכל הגרסאות שלו תלויות על הקיר. כל ציור הוא גרסה.">
 <meta name="theme-color" content="#0c0807">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -199,12 +199,12 @@ footer{position:relative;z-index:2;text-align:center;padding:40px 22px 70px;font
 
 <header class="top">
   <h1>טירת הצללים</h1>
-  <p class="lede">משחק אימה שלם בקובץ HTML אחד. כל ציור באולם הזה הוא גרסה שלו.</p>
+  <p class="lede">משחק אימה שלם בקובץ אחד, שעובד גם בלי אינטרנט. כל ציור באולם הזה הוא גרסה שלו.</p>
   <p class="hint">קרבו את הנר לציור כדי לראות אותו. ציור שנשאר בחושך משתנה.</p>
 </header>
 
 <div class="wrap">
-  <section class="hearth" id="hearth" aria-label="הגרסה הראשית">
+  <section class="hearth" id="hearth" aria-label="הציור מעל האח">
     <div class="candle" aria-hidden="true"><div class="glow"></div></div>
     <div id="main-slot"></div>
     <div class="candle" aria-hidden="true"><div class="glow"></div></div>
@@ -213,7 +213,7 @@ footer{position:relative;z-index:2;text-align:center;padding:40px 22px 70px;font
 
   <section aria-labelledby="wall-h">
     <div class="wall-head">
-      <div><h2 id="wall-h">עוד גרסאות</h2><p>כל אחד בנה את הטירה שלו, וחלק בנו יותר מאחת.</p></div>
+      <div><h2 id="wall-h">עוד ציורים באולם</h2><p>כל אחד בנה את הטירה שלו, וחלק בנו יותר מאחת.</p></div>
       <div class="who-filter" id="who" role="group" aria-label="לפי מי שבנה"></div>
     </div>
     <div class="salon" id="salon"><p class="state">מדליקים את הנרות…</p></div>
@@ -398,7 +398,7 @@ function makePiece(f, { main = false } = {}) {
   const figs = h('div', { class: 'figs', html: figureSVG(geo, 0) }); art.append(figs);
   const frame = h('button', { class: 'frame', type: 'button', 'aria-label': `פרטים על ${f.name}, של ${f.who}`, 'aria-haspopup': 'dialog' }, art);
   const eyes = h('div', { class: 'eyes', html: eyesSVG(geo, 0) });
-  const plaque = h('figcaption', { class: 'plaque' }, h('b', {}, f.name), h('span', {}, main ? 'הגרסה הראשית, של ' + f.who : 'של ' + f.who));
+  const plaque = h('figcaption', { class: 'plaque' }, h('b', {}, f.name), h('span', {}, 'של ' + f.who));
   const fig = h('figure', { class: `piece ${shape}${main ? ' main-piece' : ''}`, 'data-who': f.who }, h('div', { class: 'fw' }, frame, eyes), plaque);
   if (!main) { const w = [100, 88, 80, 94][Math.floor(R() * 4)]; fig.style.setProperty('--w', w + '%'); fig.style.setProperty('--ms', ((100 - w) * [0, .5, 1][Math.floor(R() * 3)]).toFixed(0) + '%'); }   // hung a little crooked, like a real salon wall
   const p = { f, el: fig, frame, figs, eyes, geo, shape, main, stage: 0, lit: 0, unlit: 0, need: 5 + Math.random() * 5, caught: 0 };
@@ -461,7 +461,7 @@ const descCache = {};
 const describe = f => f.txt ? (descCache[f.path] = descCache[f.path] || fetch(enc(f.txt)).then(r => r.ok ? r.text() : '').catch(() => '')) : Promise.resolve('');
 // is this game already kept on this device (after a first download)?
 const savedCopy = f => ('caches' in window) ? caches.open('tirat-games-v1').then(c => c.match(new URL(enc(f.path), location.href).href)).then(Boolean).catch(() => false) : Promise.resolve(false);
-const MAIN_DESC = 'הגרסה שממנה הכול התחיל. ארבע קומות, ארבעה קמעות ודלת אחת: מרתף שהחושך בו הורג, ספרייה עם ספרן שרק שומע, ומגדל של פסלים שזזים כשלא מסתכלים עליהם.';
+const MAIN_DESC = 'ארבע קומות, ארבעה קמעות ודלת אחת שננעלת מאחוריך. במרתף החושך הורג, בספרייה הספרן שומע כל צעד, ובמגדל הפסלים זזים כשלא מסתכלים עליהם.';
 let all = [];
 function openSheet(p) {
   const f = p.f, date = h('dd', {}, '…'), desc = h('p', { class: 'desc' }, p.main ? MAIN_DESC : 'מי שתלה את הציור הזה עוד לא כתב עליו כלום. כדי לדעת מה בפנים, צריך להיכנס.');
@@ -477,7 +477,7 @@ function openSheet(p) {
   sheet.append(h('div', { class: 'sheet' },
     big,
     h('div', {},
-      h('h3', {}, f.name), h('p', { class: 'by' }, p.main ? 'הגרסה הראשית, של ' : 'של ', h('b', {}, f.who)), desc,
+      h('h3', {}, f.name), h('p', { class: 'by' }, 'של ', h('b', {}, f.who)), desc,
       h('dl', {}, h('dt', {}, 'גודל'), h('dd', {}, mb(f.size)), h('dt', {}, 'עודכן'), date, h('dt', {}, 'קובץ'), h('dd', {}, f.file)),
       h('div', { class: 'actions' },
         h('a', { class: 'btn play', href: enc(f.path), target: '_blank', rel: 'noopener', html: ICON.play }, 'לשחק'),
@@ -506,7 +506,7 @@ function howTo() {
 }
 function vacant() {
   return h('figure', { class: 'piece vacant small' },
-    h('div', { class: 'fw' }, h('button', { class: 'frame', type: 'button', onclick: howTo, 'aria-label': 'לתלות גרסה משלכם', style: '--lit:.85' }, h('div', { class: 'art', style: '--ar:400/470' }, h('span', {}, 'המסגרת הזאת מחכה לגרסה שלך')))),
+    h('div', { class: 'fw' }, h('button', { class: 'frame', type: 'button', onclick: howTo, 'aria-label': 'לתלות גרסה משלכם', style: '--lit:.85' }, h('div', { class: 'art', style: '--ar:400/470' }, h('span', {}, 'המסגרת הזאת מחכה לגרסה שלכם')))),
     h('figcaption', { class: 'plaque' }, h('b', {}, 'מקום פנוי'), h('span', {}, 'לתלות גרסה')));
 }
 
@@ -516,7 +516,7 @@ function render(files) {
   const slot = $('#main-slot'); slot.innerHTML = '';
   if (main) { const p = makePiece(main, { main: true });
     slot.append(p.el, h('div', { class: 'main-actions' },
-      h('a', { class: 'btn play', href: enc(main.path), target: '_blank', rel: 'noopener', html: ICON.play }, 'לשחק עכשיו'),
+      h('a', { class: 'btn play', href: enc(main.path), target: '_blank', rel: 'noopener', html: ICON.play }, 'לשחק'),
       h('a', { class: 'btn', href: enc(main.path), download: main.file, html: ICON.dl }, 'להורדה'),
       h('button', { class: 'textlink', type: 'button', onclick: () => openSheet(p) }, 'פרטים')));
     const kept = h('p', { class: 'kept' }, 'שמור במכשיר: נפתח מיד'); kept.hidden = true; slot.append(kept); savedCopy(main).then(yes => { kept.hidden = !yes; }); }
@@ -524,7 +524,7 @@ function render(files) {
   const salon = $('#salon'); salon.innerHTML = '';
   for (const f of rest) salon.append(makePiece(f).el);
   salon.append(vacant());
-  if (!rest.length) salon.prepend(h('p', { class: 'state' }, 'עוד אין כאן ציורים של אחרים. הקיר מחכה.'));
+  if (!rest.length) salon.prepend(h('p', { class: 'state' }, 'עוד אין כאן ציורים נוספים. הקיר מחכה.'));
   // filter by who built it, when there is more than one builder
   const who = [...new Set(rest.map(f => f.who))], box = $('#who'); box.innerHTML = '';
   if (who.length > 1) { const tags = [];
