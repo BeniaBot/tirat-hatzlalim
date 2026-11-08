@@ -2,146 +2,392 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>טירת הצללים · הגרסאות</title>
-<meta name="description" content="משחק אימה בקובץ אחד. כל שומר לילה מביא את הגרסה שלו.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>טירת הצללים · המשמרות</title>
+<meta name="description" content="משחק אימה שלם בקובץ HTML אחד. הגרסה הראשית, וכל הגרסאות של שומרי הלילה האחרים.">
+<meta name="theme-color" content="#050404">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&family=Suez+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Suez+One&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0a0706; --ink:#e9dcc6; --dim:#a8977f; --faint:#6d5f4f; --line:rgba(233,220,198,.14);
-    --card:rgba(24,17,13,.72); --gold:#ffcf86; --blood:#8a1414; --blood-hi:#c42a1f;
-    --mx:50vw; --my:30vh;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Frank Ruhl Libre',serif;-webkit-font-smoothing:antialiased}
-  body{min-height:100vh;overflow-x:hidden}
-  /* the flashlight: the page is dark, and the light follows you */
-  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-    background:radial-gradient(520px circle at var(--mx) var(--my),rgba(255,214,150,.13),rgba(255,214,150,.04) 40%,transparent 70%),
-               radial-gradient(1200px 600px at 50% -10%,rgba(120,20,14,.28),transparent 70%)}
-  body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.07;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-  main{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:72px 20px 80px}
-  header{text-align:center;margin-bottom:56px}
-  h1{font-family:'Suez One',serif;font-weight:400;font-size:clamp(52px,9vw,104px);line-height:1;margin:0;letter-spacing:.01em;
-     text-shadow:0 0 40px rgba(196,42,31,.35),0 2px 0 #000}
-  .sub{margin:16px auto 0;max-width:560px;color:var(--dim);font-size:clamp(17px,2.2vw,20px);line-height:1.6}
-  .sub b{color:var(--ink);font-weight:700}
+:root{
+  --void:#050404;     /* the dark of the castle */
+  --bone:#e7d9c1;     /* text in the dark */
+  --ash:#8f7f69;      /* secondary text in the dark */
+  --paper:#d8c7a0;    /* Zerach's paper */
+  --ink:#24170b;      /* ink on paper */
+  --candle:#ffcf86;   /* the only warm light */
+  --blood:#9b1b12;    /* stamps, the play button, the eyes */
+  --x:50vw; --y:40vh;
+}
+*{box-sizing:border-box}
+html{background:var(--void);color-scheme:dark}
+body{margin:0;background:var(--void);color:var(--bone);font:400 18px/1.7 'Frank Ruhl Libre',serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--candle);outline-offset:3px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-  h2{font-family:'Suez One',serif;font-weight:400;font-size:28px;margin:0 0 18px;display:flex;align-items:center;gap:12px}
-  h2::after{content:'';flex:1;height:1px;background:var(--line)}
+/* ============ the hall: you only see what your flashlight touches ============ */
+.hall{position:relative;height:100svh;min-height:560px;overflow:hidden;isolation:isolate;
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 108%,rgba(110,22,14,.35),transparent 70%),
+    repeating-linear-gradient(90deg,transparent 0 118px,rgba(0,0,0,.35) 118px 121px),
+    repeating-linear-gradient(0deg,#1b130e 0 58px,#160f0b 58px 61px);}
+.hall::before{content:'';position:absolute;inset:0;opacity:.5;mix-blend-mode:multiply;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .05' numOctaves='4' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .06 0 0 0 0 .03 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.hall-title{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:0 20px;z-index:1}
+.hall h1{margin:0;font:400 clamp(64px,13vw,184px)/.9 'Suez One',serif;letter-spacing:.005em;color:#cdbb9c;
+  text-shadow:0 1px 0 #f3e6cc55,0 -1px 0 #000,0 0 1px #000,0 18px 40px rgba(0,0,0,.9)}  /* carved into the stone */
+.hall .lede{margin:22px auto 0;max-width:30ch;font-size:clamp(18px,2.3vw,23px);color:#bba98d;line-height:1.55}
+.hall .down{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:1;font:700 26px 'Amatic SC',cursive;color:#a8977d;text-decoration:none}
+/* the dark, with a hole where the beam is */
+.dark{position:absolute;inset:0;z-index:2;pointer-events:none;background:var(--void);
+  -webkit-mask-image:radial-gradient(circle var(--r,230px) at var(--x) var(--y),transparent 0,rgba(0,0,0,.35) 45%,#000 100%);
+          mask-image:radial-gradient(circle var(--r,230px) at var(--x) var(--y),transparent 0,rgba(0,0,0,.35) 45%,#000 100%)}
+.beam{position:absolute;inset:0;z-index:3;pointer-events:none;mix-blend-mode:screen;
+  background:radial-gradient(circle calc(var(--r,230px) * .9) at var(--x) var(--y),rgba(255,214,150,.16),rgba(255,214,150,.05) 50%,transparent 75%)}
+/* writing that exists only in the dark: the light erases it */
+.scrawl{position:absolute;z-index:4;pointer-events:none;font:700 clamp(26px,3.4vw,44px)/1 'Amatic SC',cursive;color:#7b1610;
+  text-shadow:0 0 12px rgba(155,27,18,.45);opacity:0;white-space:nowrap;transform:rotate(var(--rot,-4deg))}
+/* he stands where you are not looking */
+.lurker{position:absolute;z-index:1;width:120px;height:240px;left:var(--lx,12%);top:var(--ly,58%);
+  transform:translate(-50%,-100%) scale(var(--ls,.45));transform-origin:50% 100%;transition:none}
+.lurker.gone{visibility:hidden}
+.eyes{position:absolute;z-index:4;pointer-events:none;width:30px;height:8px;opacity:0;transform:translate(-50%,-50%)}
+.eyes i{position:absolute;top:0;width:7px;height:5px;border-radius:50%;background:#ff3b22;box-shadow:0 0 8px 2px rgba(255,40,20,.7)}
+.eyes i:first-child{right:3px}.eyes i:last-child{left:3px}
+.flash{position:absolute;inset:0;z-index:5;pointer-events:none;background:#6a0b06;opacity:0;mix-blend-mode:multiply}
+.flash.on{animation:redflash .9s ease-out}
+@keyframes redflash{0%{opacity:.9}100%{opacity:0}}
 
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px}
-  .card{position:relative;padding:22px 22px 20px;border:1px solid var(--line);border-radius:14px;background:var(--card);
-        backdrop-filter:blur(3px);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;overflow:hidden}
-  .card:hover{transform:translateY(-3px);border-color:rgba(255,207,134,.35);box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 0 1px rgba(255,207,134,.08) inset}
-  .card::before{content:'';position:absolute;inset:-1px;border-radius:14px;pointer-events:none;opacity:0;transition:opacity .3s;
-        background:radial-gradient(240px circle at var(--cx,50%) var(--cy,0%),rgba(255,207,134,.12),transparent 70%)}
-  .card:hover::before{opacity:1}
-  .who{font-size:14px;color:var(--faint);letter-spacing:.04em}
-  .who b{color:var(--gold);font-weight:700}
-  .name{font-size:25px;font-weight:900;margin:6px 0 4px;line-height:1.25;word-break:break-word}
-  .meta{font-size:14px;color:var(--dim)}
-  .actions{display:flex;gap:10px;margin-top:18px}
-  .btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;border-radius:10px;
-       font:700 17px 'Frank Ruhl Libre',serif;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:rgba(255,255,255,.03);
-       transition:background .2s,border-color .2s,transform .1s}
-  .btn:hover{background:rgba(255,255,255,.07);border-color:rgba(233,220,198,.3)}
-  .btn:active{transform:scale(.98)}
-  .btn.play{background:linear-gradient(#a3201a,#6e0f0c);border-color:#c42a1f;box-shadow:0 6px 22px rgba(160,24,18,.35)}
-  .btn.play:hover{background:linear-gradient(#b8261e,#7d120e)}
-  .btn svg{width:18px;height:18px;flex:none}
+/* ============ the rest of the castle: readable, but still lit by your flashlight ============ */
+main{position:relative;max-width:1080px;margin:0 auto;padding:clamp(64px,10vw,120px) 22px 40px}
+.page-glow{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(640px circle at var(--x) var(--y),rgba(255,207,134,.07),transparent 70%)}
+main>*{position:relative;z-index:1}
+h2{margin:0 0 10px;font:400 clamp(34px,4.6vw,52px)/1.05 'Suez One',serif;color:var(--bone)}
+.section-lede{margin:0 0 34px;color:var(--ash);max-width:56ch}
 
-  .state{padding:28px;border:1px dashed var(--line);border-radius:14px;color:var(--dim);text-align:center;line-height:1.7}
+/* paper: everything Zerach left behind is on this */
+.paper{position:relative;color:var(--ink);background:
+   radial-gradient(ellipse at 20% 0%,rgba(255,250,235,.35),transparent 55%),
+   radial-gradient(ellipse at 90% 100%,rgba(90,55,15,.35),transparent 60%),
+   linear-gradient(#dccba5,#c9b48a);
+  box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 30px 70px rgba(0,0,0,.75),0 2px 6px rgba(0,0,0,.6)}
+.paper::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.55;mix-blend-mode:multiply;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .32 0 0 0 0 .16 0 0 0 .35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E")}
+.nail{position:absolute;top:12px;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;z-index:2;
+  background:radial-gradient(circle at 35% 30%,#b9aa94,#3a3129 60%,#120d09);box-shadow:0 3px 4px rgba(0,0,0,.6)}
+.stamp{position:absolute;font:400 20px/1 'Suez One',serif;color:rgba(155,27,18,.82);border:3px solid rgba(155,27,18,.72);border-radius:6px;padding:7px 12px 5px;
+  transform:rotate(-9deg);mix-blend-mode:multiply;letter-spacing:.02em}
 
-  .how{margin-top:64px}
-  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;counter-reset:s}
-  .step{padding:18px 18px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(24,17,13,.5);line-height:1.65;font-size:16.5px;color:var(--dim)}
-  .step::before{counter-increment:s;content:counter(s);display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;
-        background:rgba(255,207,134,.12);color:var(--gold);font-weight:900;margin-bottom:8px}
-  .step b{color:var(--ink)}
-  code{font-family:inherit;background:rgba(255,255,255,.06);border:1px solid var(--line);padding:1px 7px;border-radius:6px;color:var(--ink)}
-  .cta{display:flex;justify-content:center;margin-top:22px}
-  .cta .btn{flex:none;padding:13px 26px}
-  .note{margin-top:14px;text-align:center;font-size:14.5px;color:var(--faint);line-height:1.7}
-  footer{position:relative;z-index:1;text-align:center;color:var(--faint);font-size:14px;padding:0 20px 40px}
-  @media (max-width:520px){ main{padding-top:48px} .actions{flex-direction:column} }
-  @media (prefers-reduced-motion:reduce){ .card,.btn{transition:none} }
+/* the main version: a dossier nailed to the castle door */
+.dossier{display:grid;grid-template-columns:1fr minmax(260px,40%);transform:rotate(-.5deg);margin-bottom:clamp(90px,12vw,140px)}
+.dossier .text{padding:clamp(28px,4vw,48px) clamp(24px,4vw,48px) 32px}
+.dossier .stamp{top:26px;left:26px}
+.who{font:700 26px/1 'Amatic SC',cursive;color:#5a3a1c}
+.dossier h3{margin:8px 0 6px;font:900 clamp(38px,5vw,58px)/1 'Frank Ruhl Libre',serif;letter-spacing:-.01em}
+.dossier .desc{margin:14px 0 0;font-size:19px;line-height:1.65;max-width:44ch}
+.facts{display:flex;flex-wrap:wrap;gap:6px 18px;margin:18px 0 0;padding:0;list-style:none;font-size:15.5px;color:#5b4630}
+.facts li::before{content:'✦';margin-left:6px;color:var(--blood);font-size:12px}
+.door{position:relative;overflow:hidden;background:#0d0907;min-height:320px}
+.door svg{position:absolute;inset:0;width:100%;height:100%}
+.sock{transition:fill .6s,filter .6s}
+.dossier:hover .sock,.dossier:focus-within .sock{fill:var(--candle);filter:drop-shadow(0 0 6px #ffb547)}
+.dossier:hover .sock:nth-of-type(2),.dossier:focus-within .sock:nth-of-type(2){transition-delay:.15s}
+.dossier:hover .sock:nth-of-type(3),.dossier:focus-within .sock:nth-of-type(3){transition-delay:.3s}
+.dossier:hover .sock:nth-of-type(4),.dossier:focus-within .sock:nth-of-type(4){transition-delay:.45s}
+
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:12px 22px 11px;border-radius:999px;text-decoration:none;cursor:pointer;
+  font:700 18px/1 'Frank Ruhl Libre',serif;border:1.5px solid currentColor;background:transparent;color:var(--ink)}
+.btn svg{width:17px;height:17px;flex:none}
+.btn.play{background:var(--blood);border-color:var(--blood);color:#fbe9d8;box-shadow:0 8px 22px rgba(120,15,8,.45)}
+.btn.play:hover{background:#b3241a}
+.btn.ghost:hover{background:rgba(36,23,11,.08)}
+.more{font:700 17px 'Frank Ruhl Libre',serif;color:#5a3a1c;background:none;border:0;padding:8px 4px;cursor:pointer;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
+
+/* the fold: more details open under the paper like a flap */
+.fold{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s ease}
+.fold.open{grid-template-rows:1fr}
+.fold>div{overflow:hidden}
+.fold-in{margin-top:22px;padding-top:18px;border-top:1px dashed rgba(36,23,11,.35);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px 28px;font-size:16.5px}
+.fold-in h4{margin:0 0 4px;font:700 15px 'Frank Ruhl Libre',serif;color:#6b5236}
+.fold-in p{margin:0}
+.copy{font:inherit;background:none;border:0;padding:0;color:var(--blood);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* the other guards: each one a name in chalk, and their slips */
+.guard{margin:0 0 70px}
+.guard-name{display:flex;align-items:baseline;gap:14px;margin:0 0 22px;font:700 clamp(40px,5vw,56px)/1 'Amatic SC',cursive;color:var(--bone)}
+.guard-name small{font:400 16px 'Frank Ruhl Libre',serif;color:var(--ash)}
+.slips{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:34px 26px}
+.slip{transform:rotate(var(--tilt,0deg));padding:0 0 18px}
+.slip .cover{position:relative;height:150px;background:#0d0907;overflow:hidden}
+.slip .cover img,.slip .cover svg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.slip .body{padding:16px 18px 0}
+.slip h3{margin:0;font:900 25px/1.15 'Frank Ruhl Libre',serif}
+.slip .size{font-size:14.5px;color:#6b5236}
+.slip .actions{margin-top:14px;gap:8px}
+.slip .btn{padding:10px 16px 9px;font-size:16px}
+.slip .nail{top:-6px}
+/* the info bubble on a slip */
+.bubble{position:absolute;z-index:5;inset:auto 12px 64px 12px;padding:16px 18px;border-radius:12px;color:var(--bone);font-size:15.5px;line-height:1.6;
+  background:#140d09;border:1px solid rgba(231,217,193,.18);box-shadow:0 24px 60px rgba(0,0,0,.8);opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .2s,transform .2s}
+.bubble.open{opacity:1;transform:none;pointer-events:auto}
+.bubble::after{content:'';position:absolute;bottom:-7px;left:40px;width:12px;height:12px;background:#140d09;border:1px solid rgba(231,217,193,.18);border-top:0;border-left:0;transform:rotate(45deg)}
+.bubble p{margin:0 0 8px}
+.bubble dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0;color:var(--ash)}
+.bubble dd{margin:0;color:var(--bone)}
+.bubble .copy{color:var(--candle)}
+
+.empty{padding:28px;border:1.5px dashed rgba(231,217,193,.22);border-radius:6px;color:var(--ash);max-width:520px}
+.empty a{color:var(--candle)}
+
+/* form 17b: how to join the shift */
+.form{max-width:760px;padding:clamp(28px,4vw,44px);transform:rotate(.4deg);margin-top:30px}
+.form .stamp{top:24px;left:24px;font-size:17px}
+.form h2{color:var(--ink);font-size:clamp(28px,3.6vw,40px)}
+.form .section-lede{color:#5b4630;margin-bottom:22px}
+.form ol{margin:0;padding:0;list-style:none;counter-reset:s}
+.form li{counter-increment:s;display:grid;grid-template-columns:44px 1fr;gap:12px;padding:12px 0;border-top:1px solid rgba(36,23,11,.18);font-size:17.5px;line-height:1.6}
+.form li::before{content:counter(s);font:700 34px/1 'Amatic SC',cursive;color:var(--blood)}
+.form code{font-family:inherit;font-weight:700;background:rgba(36,23,11,.08);padding:1px 7px;border-radius:4px}
+.form .fine{margin:18px 0 0;font-size:15px;color:#6b5236}
+footer{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:40px 22px 60px;color:#5f5244;font-size:15px}
+
+@media (max-width:760px){
+  .dossier{grid-template-columns:1fr}
+  .door{min-height:220px;order:-1}
+  .dossier .stamp{top:auto;bottom:22px;left:22px}
+  .hall .down{bottom:18px}
+  .form .stamp{position:static;display:inline-block;margin-bottom:16px}
+}
+@media (prefers-reduced-motion:reduce){ .fold,.bubble,.sock{transition:none} .flash.on{animation:none} }
 </style>
 </head>
 <body>
-<main>
-  <header>
-    <h1>טירת הצללים</h1>
-    <p class="sub">משחק אימה שלם בקובץ אחד, שעובד גם בלי אינטרנט.<br><b>כל שומר לילה מביא את הגרסה שלו.</b></p>
-  </header>
 
-  <section>
-    <h2>הגרסאות</h2>
-    <div id="list" class="grid"><div class="state">מדליקים את הפנס…</div></div>
+<section class="hall" id="hall" aria-label="טירת הצללים">
+  <div class="hall-title">
+    <h1>טירת הצללים</h1>
+    <p class="lede">משחק אימה שלם בקובץ אחד, שעובד גם בלי אינטרנט. כאן נמצאות כל המשמרות.</p>
+  </div>
+  <svg class="lurker" id="lurker" viewBox="0 0 120 240" aria-hidden="true">
+    <path d="M60 6c-17 0-28 15-28 34 0 9 3 17 7 23-14 9-25 27-28 54L4 236c10-6 18 1 26-4 9 5 16-3 26 2 9-6 18 2 27-3 9 5 18-2 33 3l-6-118c-3-27-14-45-28-54 4-6 7-14 7-23 0-19-11-34-29-34z" fill="#030202"/>
+    <path d="M60 14c-11 0-19 11-19 26 0 12 7 22 19 22s19-10 19-22c0-15-8-26-19-26z" fill="#000"/>
+  </svg>
+  <div class="dark" aria-hidden="true"></div>
+  <div class="beam" aria-hidden="true"></div>
+  <div class="eyes" id="eyes" aria-hidden="true"><i></i><i></i></div>
+  <span class="scrawl" style="right:8%;top:16%;--rot:-6deg" aria-hidden="true">אל תסתובב</span>
+  <span class="scrawl" style="left:7%;top:24%;--rot:5deg" aria-hidden="true">הוא שומע את העכבר</span>
+  <span class="scrawl" style="right:14%;bottom:20%;--rot:3deg" aria-hidden="true">השומר הקודם עדיין פה</span>
+  <span class="scrawl" style="left:30%;bottom:9%;--rot:-3deg" aria-hidden="true">כבה את האור</span>
+  <span class="scrawl" style="left:40%;top:8%;--rot:2deg" aria-hidden="true">ארבעה קמעות. יציאה אחת.</span>
+  <div class="flash" id="flash" aria-hidden="true"></div>
+  <a class="down" href="#main-version">הגרסאות למטה. לאט.</a>
+</section>
+
+<div class="page-glow" aria-hidden="true"></div>
+<main>
+  <section id="main-version" aria-label="הגרסה הראשית"></section>
+
+  <section id="guards" aria-labelledby="guards-h">
+    <h2 id="guards-h">שומרים אחרים</h2>
+    <p class="section-lede">כל מי שעבר משמרת בטירה הזאת יצא ממנה קצת אחרת, וחלק הביאו איתם גרסה משלהם.</p>
+    <div id="shelves"><div class="empty">מחפשים את השומרים בחושך…</div></div>
   </section>
 
-  <section class="how">
-    <h2>יש לך גרסה משלך?</h2>
-    <div class="steps">
-      <div class="step">לוחצים על <b>"העלאת גרסה"</b> למטה. צריך חשבון גיטהאב, וזה הכול.</div>
-      <div class="step">בשורת השם שמעל הקובץ כותבים <b>את השם שלכם ואחריו לוכסן</b>, למשל <code>משה/</code>, ואז גוררים פנימה את קובץ ה־HTML.</div>
-      <div class="step">למטה לוחצים <b>"Propose changes"</b> ואז <b>"Create pull request"</b>. אחרי אישור, הגרסה מופיעה כאן לבד.</div>
-    </div>
-    <div class="cta"><a class="btn play" id="upload" href="#" target="_blank" rel="noopener">העלאת גרסה</a></div>
-    <p class="note">קובץ HTML אחד לכל גרסה, עד 25 מגה. שם הקובץ הוא שם הגרסה שיופיע בדף.<br>גרסה חדשה באותו שם מחליפה את הקודמת.</p>
+  <section class="form paper" id="join" aria-labelledby="join-h">
+    <span class="stamp">טופס 17ב</span>
+    <h2 id="join-h">בקשה להצטרף למשמרת</h2>
+    <p class="section-lede">יש לך גרסה משלך? היא תופיע כאן אחרי אישור.</p>
+    <ol>
+      <li><div>לוחצים על <b>העלאת גרסה</b> למטה. צריך חשבון גיטהאב, וזה הכול.</div></li>
+      <li><div>בשורת השם שמעל הקובץ כותבים את השם שלכם ואחריו לוכסן, למשל <code>משה/</code>, וגוררים פנימה את קובץ ה־HTML. אפשר להעלות כמה גרסאות לאותו שם.</div></li>
+      <li><div>לוחצים <b>Propose changes</b> ואז <b>Create pull request</b>. אחרי אישור, הגרסה מופיעה בדף לבד.</div></li>
+    </ol>
+    <div class="actions"><a class="btn play" id="upload" href="#" target="_blank" rel="noopener">העלאת גרסה</a></div>
+    <p class="fine">רוצים תיאור ותמונה? מעלים לאותה תיקייה, ליד המשחק, קובץ טקסט ותמונה באותו שם. למשל <code>הטירה שלי.html</code>, <code>הטירה שלי.txt</code> ו־<code>הטירה שלי.jpg</code>. עד 25 מגה לקובץ.</p>
   </section>
 </main>
 <footer>ההנהלה לא אחראית למה שקורה בגרסאות של אחרים. גם לא בשלנו.</footer>
 
 <script>
 (() => {
-  const OWNER = 'BeniaBot', REPO = 'tirat-hatzlalim', BRANCH = 'main', DIR = 'versions';
-  document.getElementById('upload').href = `https://github.com/${OWNER}/${REPO}/upload/${BRANCH}/${DIR}`;
+'use strict';
+const OWNER = 'BeniaBot', REPO = 'tirat-hatzlalim', BRANCH = 'main', DIR = 'versions';
+const MAIN = { who: 'BeniaBot', file: 'טירת הצללים.html' };   // the main version opens the page
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = s => document.querySelector(s);
+$('#upload').href = `https://github.com/${OWNER}/${REPO}/upload/${BRANCH}/${DIR}`;
 
-  // the light follows the pointer (and the card under it glows where you point)
-  addEventListener('pointermove', e => {
-    document.documentElement.style.setProperty('--mx', e.clientX + 'px');
-    document.documentElement.style.setProperty('--my', e.clientY + 'px');
-    const c = e.target.closest && e.target.closest('.card');
-    if (c) { const r = c.getBoundingClientRect(); c.style.setProperty('--cx', (e.clientX - r.left) + 'px'); c.style.setProperty('--cy', (e.clientY - r.top) + 'px'); }
-  }, { passive: true });
+/* ---------- the flashlight ---------- */
+const root = document.documentElement, hall = $('#hall');
+let px = innerWidth / 2, py = innerHeight * .4, moved = false;
+function setLight(x, y) { px = x; py = y; root.style.setProperty('--x', x + 'px'); root.style.setProperty('--y', y + 'px'); }
+addEventListener('pointermove', e => { moved = true; setLight(e.clientX, e.clientY); }, { passive: true });
+addEventListener('touchmove', e => { const t = e.touches[0]; if (t) { moved = true; setLight(t.clientX, t.clientY); } }, { passive: true });
+// until you move, the beam searches the hall by itself
+if (!REDUCED) { const t0 = performance.now(); (function sweep(now) { if (moved) return; const k = (now - t0) / 1000;
+  setLight(innerWidth * (.5 + .32 * Math.sin(k * .55)), innerHeight * (.42 + .16 * Math.sin(k * .9 + 1))); requestAnimationFrame(sweep); })(t0); }
+else setLight(innerWidth / 2, innerHeight * .42);
 
-  const enc = p => p.split('/').map(encodeURIComponent).join('/');
-  const mb = n => (n / 1048576).toFixed(1) + ' מגה';
-  const icon = {
-    play: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>',
-    dl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>'
-  };
-  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
-
-  function render(files) {
-    const list = document.getElementById('list'); list.innerHTML = '';
-    if (!files.length) { list.appendChild(el('div', 'state', 'עדיין אין כאן גרסאות. אולי תהיה הראשון.')); return; }
-    // the original first, then everyone else by name
-    files.sort((a, b) => (a.who === OWNER ? -1 : b.who === OWNER ? 1 : a.who.localeCompare(b.who, 'he') || a.name.localeCompare(b.name, 'he')));
-    for (const f of files) {
-      const card = el('article', 'card');
-      const who = el('div', 'who'); who.append('הגרסה של '); who.appendChild(el('b', null, f.who)); card.appendChild(who);
-      card.appendChild(el('div', 'name', f.name));
-      card.appendChild(el('div', 'meta', mb(f.size)));
-      const act = el('div', 'actions');
-      const play = el('a', 'btn play'); play.href = enc(f.path); play.target = '_blank'; play.rel = 'noopener'; play.innerHTML = icon.play; play.append('לשחק');
-      const dl = el('a', 'btn'); dl.href = enc(f.path); dl.setAttribute('download', f.file); dl.innerHTML = icon.dl; dl.append('להורדה');
-      act.append(play, dl); card.appendChild(act); list.appendChild(card);
+/* ---------- writing that lives only in the dark ---------- */
+const scrawls = [...document.querySelectorAll('.scrawl')];
+/* ---------- the one who stands where you are not looking ---------- */
+const lurker = $('#lurker'), eyes = $('#eyes'), flash = $('#flash');
+const STEPS = [[10, 66, .42], [17, 63, .58], [25, 61, .78], [33, 60, 1.02]];
+let step = 0, unseen = 0, lit = 0, gone = 0, last = performance.now();
+function placeLurker() { const [x, y, s] = STEPS[step]; lurker.style.setProperty('--lx', x + '%'); lurker.style.setProperty('--ly', y + '%'); lurker.style.setProperty('--ls', s); }
+placeLurker();
+function frame(now) {
+  const dt = Math.min(.1, (now - last) / 1000); last = now;
+  const r = hall.getBoundingClientRect();
+  if (r.bottom > 0) {
+    const R = Math.max(170, Math.min(260, innerWidth * .22)); root.style.setProperty('--r', R + 'px');
+    for (const s of scrawls) { const b = s.getBoundingClientRect(), d = Math.hypot(b.left + b.width / 2 - px, b.top + b.height / 2 - py);
+      s.style.opacity = Math.max(0, Math.min(1, (d - R * .55) / (R * 1.1))) * .7; }
+    // where his face is
+    const lb = lurker.getBoundingClientRect(), fx = lb.left + lb.width / 2, fy = lb.top + lb.height * .17, d = Math.hypot(fx - px, fy - py);
+    eyes.style.left = (fx - r.left) + 'px'; eyes.style.top = (fy - r.top) + 'px';
+    if (gone > 0) { gone -= dt; lurker.classList.add('gone'); eyes.style.opacity = 0;
+      if (gone <= 0) { lurker.classList.remove('gone'); step = 0; placeLurker(); } }
+    else {
+      eyes.style.opacity = d > R * .8 ? Math.min(1, (d - R * .8) / R) * (.55 + .45 * Math.abs(Math.sin(now / 900))) : 0;   // two coals, only in the dark
+      if (d < R * .55) { lit += dt; unseen = 0;
+        if (lit > (step === STEPS.length - 1 ? .25 : .5)) {   // caught in the beam: he is gone, jerkily
+          if (step === STEPS.length - 1 && !REDUCED) { flash.classList.remove('on'); void flash.offsetWidth; flash.classList.add('on'); }
+          lit = 0; gone = 5 + Math.random() * 4; }
+      } else { lit = 0; unseen += dt;
+        if (!REDUCED && unseen > 2.6 && step < STEPS.length - 1 && document.visibilityState === 'visible') { unseen = 0; step++; placeLurker(); } }
     }
   }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
 
-  fetch(`https://api.github.com/repos/${OWNER}/${REPO}/git/trees/${BRANCH}?recursive=1`)
-    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(d => render(d.tree.filter(t => t.type === 'blob' && t.path.startsWith(DIR + '/') && /\.html?$/i.test(t.path))
-      .map(t => { const parts = t.path.split('/'); const file = parts[parts.length - 1];
-        return { path: t.path, file, size: t.size, who: parts.length > 2 ? parts[1] : 'אלמוני', name: file.replace(/\.html?$/i, '') }; })))
-    .catch(() => { const list = document.getElementById('list'); list.innerHTML = '';
-      const s = el('div', 'state'); s.append('הרשימה לא נטענה כרגע. אפשר לראות את כל הגרסאות ישירות ');
-      const a = el('a', null, 'בתיקייה במאגר'); a.href = `https://github.com/${OWNER}/${REPO}/tree/${BRANCH}/${DIR}`; a.style.color = 'var(--gold)'; s.append(a, '.'); list.appendChild(s); });
+/* ---------- the versions ---------- */
+const enc = p => p.split('/').map(encodeURIComponent).join('/');
+const mb = n => (n / 1048576).toFixed(1) + ' מגה';
+const hash = s => { let h = 2166136261; for (const c of s) h = Math.imul(h ^ c.codePointAt(0), 16777619); return (h >>> 0); };
+const ICON = {
+  play: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>',
+  dl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>'
+};
+const h = (tag, attrs = {}, ...kids) => { const n = document.createElement(tag);
+  for (const k in attrs) { if (k === 'html') n.innerHTML = attrs[k]; else if (k.startsWith('on')) n.addEventListener(k.slice(2), attrs[k]); else n.setAttribute(k, attrs[k]); }
+  for (const c of kids) if (c != null) n.append(c); return n; };
+
+// a castle in the night, a little different for every version (lit window, moon, towers)
+function coverSVG(seed) {
+  const r = n => ((seed = Math.imul(seed ^ (seed >>> 15), 2246822507) >>> 0) % 1000) / 1000 * n;
+  const towers = 3 + Math.floor(r(3)), w = 400, base = 150;
+  let d = `M0 ${base}`; const lit = [];
+  for (let i = 0; i < towers; i++) { const x0 = (i + .15) / towers * w, x1 = x0 + w / towers * .55, top = 40 + r(55);
+    d += ` L${x0} ${base - 30} L${x0} ${top + 14} L${(x0 + x1) / 2} ${top} L${x1} ${top + 14} L${x1} ${base - 30}`;
+    if (r(1) > .4) lit.push([x0 + (x1 - x0) * (.3 + r(.4)), top + 26 + r(30)]); }
+  d += ` L${w} ${base - 30} L${w} 200 L0 200 Z`;
+  const mx = 40 + r(320), hue = 10 + r(30);
+  return `<svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><radialGradient id="m${seed}" cx="${mx / 4}%" cy="22%" r="60%"><stop offset="0" stop-color="hsl(${hue},40%,22%)"/><stop offset="1" stop-color="#070505"/></radialGradient></defs>
+    <rect width="400" height="200" fill="url(#m${seed})"/>
+    <circle cx="${mx}" cy="40" r="15" fill="#d9ccb0" opacity=".75"/><circle cx="${mx + 6}" cy="36" r="13" fill="hsl(${hue},40%,16%)" opacity=".9"/>
+    <path d="${d}" fill="#030202"/>
+    ${lit.map(([x, y]) => `<rect x="${x}" y="${y}" width="5" height="9" fill="#ffcf86"><animate attributeName="opacity" values="1;.4;1;1;.2;1" dur="${3 + r(4)}s" repeatCount="indefinite"/></rect>`).join('')}
+  </svg>`;
+}
+// the castle door with four relic sockets: they light when you reach for the version
+const DOOR = `<svg viewBox="0 0 300 380" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+  <defs><linearGradient id="wood" x1="0" x2="1"><stop offset="0" stop-color="#2a1a10"/><stop offset=".5" stop-color="#3a2416"/><stop offset="1" stop-color="#22150d"/></linearGradient>
+  <radialGradient id="dl" cx="50%" cy="15%" r="80%"><stop offset="0" stop-color="#3b2516"/><stop offset="1" stop-color="#090605"/></radialGradient></defs>
+  <rect width="300" height="380" fill="url(#dl)"/>
+  <path d="M60 380V150a90 90 0 0 1 180 0v230z" fill="url(#wood)" stroke="#120b07" stroke-width="6"/>
+  ${[95, 130, 165, 200].map(x => `<line x1="${x}" y1="${x === 95 || x === 200 ? 100 : 66}" x2="${x}" y2="380" stroke="#160e08" stroke-width="3"/>`).join('')}
+  <rect x="60" y="210" width="180" height="12" fill="#151515"/><rect x="60" y="300" width="180" height="12" fill="#151515"/>
+  <circle cx="215" cy="262" r="7" fill="#151515"/>
+  <g><path class="sock" d="M105 42l10 10-10 10-10-10z" fill="#1a1210" stroke="#5d4a36"/><path class="sock" d="M135 32l10 10-10 10-10-10z" fill="#1a1210" stroke="#5d4a36"/>
+  <path class="sock" d="M165 32l10 10-10 10-10-10z" fill="#1a1210" stroke="#5d4a36"/><path class="sock" d="M195 42l10 10-10 10-10-10z" fill="#1a1210" stroke="#5d4a36"/></g>
+  <rect x="0" y="372" width="300" height="8" fill="#000"/>
+  <path d="M110 380 L150 330 L190 380z" fill="rgba(255,190,110,.10)"/>
+</svg>`;
+
+const buttons = f => h('div', { class: 'actions' },
+  h('a', { class: 'btn play', href: enc(f.path), target: '_blank', rel: 'noopener', html: ICON.play }, 'לשחק'),
+  h('a', { class: 'btn ghost', href: enc(f.path), download: f.file, html: ICON.dl }, 'להורדה'));
+const copyLink = f => h('button', { class: 'copy', type: 'button', onclick: e => { const u = new URL(enc(f.path), location.href).href;
+  (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(() => { e.target.textContent = 'הקישור הועתק'; setTimeout(() => e.target.textContent = 'להעתיק קישור למשחק', 2200); }).catch(() => prompt('הקישור למשחק:', u)); } }, 'להעתיק קישור למשחק');
+// when was it last touched? asked only when someone opens the details
+const dateCache = {};
+function lastChange(f, el) {
+  if (dateCache[f.path]) { el.textContent = dateCache[f.path]; return; }
+  fetch(`https://api.github.com/repos/${OWNER}/${REPO}/commits?path=${encodeURIComponent(f.path)}&per_page=1`).then(r => r.ok ? r.json() : Promise.reject())
+    .then(c => { const d = new Date(c[0].commit.committer.date); dateCache[f.path] = d.toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' }); el.textContent = dateCache[f.path]; })
+    .catch(() => el.textContent = 'לא ידוע');
+}
+const describe = f => f.txt ? fetch(enc(f.txt)).then(r => r.ok ? r.text() : '').catch(() => '') : Promise.resolve('');
+
+function renderMain(f) {
+  const box = $('#main-version'); box.innerHTML = '';
+  if (!f) return;
+  const date = h('p', {}, '…'), more = h('button', { class: 'more', type: 'button', 'aria-expanded': 'false' }, 'עוד פרטים');
+  const desc = h('p', { class: 'desc' }, 'שומר לילה חדש, טירה שהדלת שלה ננעלת מאחוריו, וארבעה קמעות שמחכים בארבע קומות. מרתף שהחושך בו הורג, ספרייה עם ספרן שרק שומע, ומגדל של פסלים שזזים כשלא מסתכלים.');
+  const fold = h('div', { class: 'fold' }, h('div', {}, h('div', { class: 'fold-in' },
+    h('div', {}, h('h4', {}, 'מה צריך'), h('p', {}, 'דפדפן ואוזניות. אחרי ההורדה זה עובד גם בלי אינטרנט, וגם בטלפון לרוחב.')),
+    h('div', {}, h('h4', {}, 'כמה זמן'), h('p', {}, 'משמרת אחת, בערך שעה. ההתקדמות נשמרת.')),
+    h('div', {}, h('h4', {}, 'עודכן לאחרונה'), date),
+    h('div', {}, h('h4', {}, 'לשתף'), h('p', {}, copyLink(f))))));
+  more.addEventListener('click', () => { const o = fold.classList.toggle('open'); more.setAttribute('aria-expanded', o); more.textContent = o ? 'פחות פרטים' : 'עוד פרטים'; if (o) lastChange(f, date); });
+  describe(f).then(t => { if (t.trim()) desc.textContent = t.trim(); });
+  box.append(h('article', { class: 'dossier paper' },
+    h('div', { class: 'text' }, h('span', { class: 'nail' }), h('span', { class: 'stamp' }, 'הגרסה הראשית'),
+      h('div', { class: 'who' }, 'המשמרת של ' + f.who), h('h3', {}, f.name), desc,
+      h('ul', { class: 'facts' }, h('li', {}, 'ארבע קומות'), h('li', {}, 'קובץ אחד, ' + mb(f.size)), h('li', {}, 'עובד בלי אינטרנט')),
+      h('div', { class: 'actions' }, ...buttons(f).childNodes, more), fold),
+    h('div', { class: 'door', html: DOOR })));
+}
+
+function slip(f) {
+  const seed = hash(f.path), tilt = ((seed % 7) - 3) * .45;
+  const date = h('dd', {}, '…'), body = h('p', {}, 'בלי תיאור. מי שהעלה אותה עוד לא סיפר מה מחכה בפנים.');
+  const bubble = h('div', { class: 'bubble', role: 'dialog', 'aria-label': 'פרטים על ' + f.name }, body,
+    h('dl', {}, h('dt', {}, 'גודל'), h('dd', {}, mb(f.size)), h('dt', {}, 'עודכן'), date), h('p', { style: 'margin:8px 0 0' }, copyLink(f)));
+  const info = h('button', { class: 'more', type: 'button', 'aria-expanded': 'false' }, 'פרטים');
+  info.addEventListener('click', e => { e.stopPropagation(); const o = !bubble.classList.contains('open'); document.querySelectorAll('.bubble.open').forEach(b => b.classList.remove('open'));
+    bubble.classList.toggle('open', o); info.setAttribute('aria-expanded', o); if (o) lastChange(f, date); });
+  describe(f).then(t => { if (t.trim()) body.textContent = t.trim(); });
+  const cover = h('div', { class: 'cover', html: f.img ? '' : coverSVG(seed) }); if (f.img) cover.append(h('img', { src: enc(f.img), alt: '', loading: 'lazy' }));
+  const acts = buttons(f); acts.append(info);
+  return h('article', { class: 'slip paper', style: `--tilt:${tilt}deg` }, h('span', { class: 'nail' }), cover, h('div', { class: 'body' }, h('h3', {}, f.name), h('div', { class: 'size' }, mb(f.size)), acts), bubble);
+}
+document.addEventListener('click', e => { if (!e.target.closest('.bubble')) document.querySelectorAll('.bubble.open').forEach(b => b.classList.remove('open')); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.bubble.open').forEach(b => b.classList.remove('open')); });
+
+function renderGuards(files) {
+  const box = $('#shelves'); box.innerHTML = '';
+  const by = new Map(); for (const f of files) { if (!by.has(f.who)) by.set(f.who, []); by.get(f.who).push(f); }
+  if (!by.size) { box.append(h('div', { class: 'empty' }, 'המשמרת פנויה. אף שומר אחר עוד לא חזר עם גרסה משלו. ', h('a', { href: '#join' }, 'אולי זה יהיה אתה'), '.')); return; }
+  const names = [...by.keys()].sort((a, b) => a === OWNER ? -1 : b === OWNER ? 1 : a.localeCompare(b, 'he'));
+  for (const who of names) { const list = by.get(who).sort((a, b) => a.name.localeCompare(b.name, 'he'));
+    box.append(h('div', { class: 'guard' }, h('div', { class: 'guard-name' }, who === OWNER ? 'עוד מהמשמרת הראשית' : who, h('small', {}, list.length === 1 ? 'גרסה אחת' : list.length + ' גרסאות')),
+      h('div', { class: 'slips' }, ...list.map(slip)))); }
+}
+
+window.__tv = { renderGuards };   // lets a tester preview other guards' shelves
+fetch(`https://api.github.com/repos/${OWNER}/${REPO}/git/trees/${BRANCH}?recursive=1`)
+  .then(r => r.ok ? r.json() : Promise.reject(r.status))
+  .then(d => {
+    const blobs = d.tree.filter(t => t.type === 'blob' && t.path.startsWith(DIR + '/'));
+    const has = new Set(blobs.map(b => b.path));
+    const sib = (p, exts) => { const base = p.replace(/\.html?$/i, ''); for (const e of exts) if (has.has(base + e)) return base + e; return null; };
+    const files = blobs.filter(t => /\.html?$/i.test(t.path)).map(t => { const parts = t.path.split('/'), file = parts[parts.length - 1];
+      return { path: t.path, file, size: t.size, who: parts.length > 2 ? parts[1] : 'אלמוני', name: file.replace(/\.html?$/i, ''),
+        txt: sib(t.path, ['.txt', '.TXT']), img: sib(t.path, ['.jpg', '.jpeg', '.png', '.webp', '.JPG', '.PNG']) }; });
+    const main = files.find(f => f.who === MAIN.who && f.file === MAIN.file) || files.find(f => f.who === MAIN.who);
+    renderMain(main); renderGuards(files.filter(f => f !== main));
+  })
+  .catch(() => { $('#shelves').innerHTML = ''; $('#shelves').append(h('div', { class: 'empty' }, 'רשימת הגרסאות לא נטענה כרגע, כנראה בגלל עומס אצל גיטהאב. כל הגרסאות נמצאות גם ',
+    h('a', { href: `https://github.com/${OWNER}/${REPO}/tree/${BRANCH}/${DIR}` }, 'בתיקייה במאגר'), '.')); });
 })();
 </script>
 </body>
