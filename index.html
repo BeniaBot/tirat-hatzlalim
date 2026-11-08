@@ -125,6 +125,7 @@ h1{margin:0;font:900 clamp(66px,12.5vw,170px)/.88 'Frank Ruhl Libre',serif;lette
 .btn.play{background:var(--blood);border-color:#c0241a;color:#fde9d8;box-shadow:0 10px 30px rgba(142,19,12,.45)}
 .btn.play:hover{background:#a8180f}
 .btn:hover{border-color:var(--flame)}
+.kept{margin:10px 0 0;text-align:center;font-size:15px;color:#9fb08a}
 .textlink{background:none;border:0;cursor:pointer;color:var(--dust);text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1px;padding:13px 6px;font:500 18px 'Frank Ruhl Libre',serif}
 
 /* ===== the gallery wall ===== */
@@ -458,6 +459,8 @@ function lastChange(f, el) {
 }
 const descCache = {};
 const describe = f => f.txt ? (descCache[f.path] = descCache[f.path] || fetch(enc(f.txt)).then(r => r.ok ? r.text() : '').catch(() => '')) : Promise.resolve('');
+// is this game already kept on this device (after a first download)?
+const savedCopy = f => ('caches' in window) ? caches.open('tirat-games-v1').then(c => c.match(new URL(enc(f.path), location.href).href)).then(Boolean).catch(() => false) : Promise.resolve(false);
 const MAIN_DESC = 'הגרסה שממנה הכול התחיל. ארבע קומות, ארבעה קמעות ודלת אחת: מרתף שהחושך בו הורג, ספרייה עם ספרן שרק שומע, ומגדל של פסלים שזזים כשלא מסתכלים עליהם.';
 let all = [];
 function openSheet(p) {
@@ -466,6 +469,8 @@ function openSheet(p) {
   const copy = h('button', { class: 'textlink', type: 'button', onclick: e => { const u = new URL(enc(f.path), location.href).href;
     (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(() => { e.target.textContent = 'הקישור הועתק'; }).catch(() => prompt('הקישור למשחק:', u)); } }, 'להעתיק קישור');
   const others = all.filter(o => o.who === f.who && o !== f);
+  const note = h('p', { class: 'note' }, `הפתיחה הראשונה מורידה ${mb(f.size)}, וזה לוקח קצת זמן. אחר כך המשחק נשמר במכשיר ונפתח מיד, גם בלי אינטרנט.`);
+  savedCopy(f).then(yes => { if (yes) note.textContent = 'המשחק כבר שמור במכשיר הזה, אז הוא נפתח מיד, גם בלי אינטרנט. כשתעלה גרסה חדשה, היא תרד לבד.'; });
   // a copy of the painting, with the figure exactly where it is now
   const big = h('div', { class: `piece ${p.shape}` }, h('div', { class: 'fw' }, h('div', { class: 'frame', style: '--lit:1' }, p.frame.querySelector('.art').cloneNode(true)), p.eyes.cloneNode(true)));
   sheet.innerHTML = '';
@@ -477,7 +482,7 @@ function openSheet(p) {
       h('div', { class: 'actions' },
         h('a', { class: 'btn play', href: enc(f.path), target: '_blank', rel: 'noopener', html: ICON.play }, 'לשחק'),
         h('a', { class: 'btn', href: enc(f.path), download: f.file, html: ICON.dl }, 'להורדה'), copy),
-      h('p', { class: 'note' }, `הפתיחה הראשונה מהאתר מורידה ${mb(f.size)}, וזה לוקח קצת זמן. אחרי הורדה למחשב זה נפתח מיד ועובד גם בלי אינטרנט.`),
+      note,
       others.length ? h('div', { class: 'more-of' }, `עוד של ${f.who}:`, ...others.map(o => h('button', { class: 'tag', type: 'button', 'aria-pressed': 'true', onclick: () => { const q = pieces.find(x => x.f === o); if (q) openSheet(q); } }, o.name))) : null),
     h('button', { class: 'close', type: 'button', 'aria-label': 'לסגור', onclick: () => sheet.close() }, '×')));
   if (!sheet.open) sheet.showModal();
@@ -513,7 +518,8 @@ function render(files) {
     slot.append(p.el, h('div', { class: 'main-actions' },
       h('a', { class: 'btn play', href: enc(main.path), target: '_blank', rel: 'noopener', html: ICON.play }, 'לשחק עכשיו'),
       h('a', { class: 'btn', href: enc(main.path), download: main.file, html: ICON.dl }, 'להורדה'),
-      h('button', { class: 'textlink', type: 'button', onclick: () => openSheet(p) }, 'פרטים'))); }
+      h('button', { class: 'textlink', type: 'button', onclick: () => openSheet(p) }, 'פרטים')));
+    const kept = h('p', { class: 'kept' }, 'שמור במכשיר: נפתח מיד'); kept.hidden = true; slot.append(kept); savedCopy(main).then(yes => { kept.hidden = !yes; }); }
   const rest = files.filter(f => f !== main).sort((a, b) => a.who === b.who ? a.name.localeCompare(b.name, 'he') : a.who === OWNER ? -1 : b.who === OWNER ? 1 : a.who.localeCompare(b.who, 'he'));
   const salon = $('#salon'); salon.innerHTML = '';
   for (const f of rest) salon.append(makePiece(f).el);
@@ -525,7 +531,8 @@ function render(files) {
     const pick = name => { tags.forEach(t => t.setAttribute('aria-pressed', t.dataset.who === name)); salon.querySelectorAll('.piece[data-who]').forEach(el => el.hidden = !(name === '*' || el.dataset.who === name)); };
     for (const name of ['*', ...who]) { const t = h('button', { class: 'tag', type: 'button', 'data-who': name, 'aria-pressed': name === '*' ? 'true' : 'false', onclick: () => pick(name) }, name === '*' ? 'כולם' : name); tags.push(t); box.append(t); } }
 }
-window.__hall = { render, pieces, setStage, lightning: () => lightning() };   // lets a tester hang imaginary paintings
+window.__hall = { render, pieces, setStage, lightning: () => lightning() };
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});   // lets a tester hang imaginary paintings
 
 fetch(`https://api.github.com/repos/${OWNER}/${REPO}/git/trees/${BRANCH}?recursive=1`)
   .then(r => r.ok ? r.json() : Promise.reject(r.status))
