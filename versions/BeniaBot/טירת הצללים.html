@@ -261,7 +261,7 @@ body.touch .paper{scrollbar-width:none}body.touch .paper::-webkit-scrollbar{disp
 @media (max-height: 820px){ #note .paper p{font-size:26px} #note .paper .hint{font-size:23px} }
 #loading .lerr{max-width:min(520px,88vw);display:grid;gap:8px;justify-items:center}
 #loading .lerr strong{font-size:22px;color:#e8c9a0}
-#loading .lerr p{margin:0;font-size:16.5px;line-height:1.6;color:var(--dim)}
+#loading .lerr p{margin:0;font-size:16.5px;line-height:1.7;color:var(--dim);white-space:pre-line}
 #loading .lerr code{direction:ltr;font-size:12.5px;color:var(--faint);background:rgba(255,255,255,.05);padding:4px 8px;border-radius:4px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #loading .lretry{margin-top:6px;padding:10px 22px;border-radius:999px;border:1px solid rgba(233,220,198,.35);background:rgba(255,255,255,.04);color:var(--ink);font:700 17px var(--serif);cursor:pointer}
 #noscript{position:fixed;inset:0;z-index:300;display:grid;place-content:center;gap:10px;text-align:center;padding:24px;background:#050304;color:#e9dcc6;font-size:19px;line-height:1.6}
@@ -277,7 +277,9 @@ L.querySelector("strong").textContent=title;L.querySelector("p").textContent=bod
 L.querySelector(".lretry").onclick=function(){location.reload();};};
 window.addEventListener("error",function(e){if(window.__ready)return;window.__fail("המשחק לא הצליח לעלות על המחשב הזה","משהו השתבש בזמן שהמשחק עלה. אפשר לנסות שוב, ואם זה חוזר, לפתוח את הקובץ בדפדפן אחר או מעודכן יותר.",e.message||"");});
 window.addEventListener("unhandledrejection",function(e){if(window.__ready)return;window.__fail("המשחק לא הצליח לעלות על המחשב הזה","משהו השתבש בזמן שהמשחק עלה. אפשר לנסות שוב, ואם זה חוזר, לפתוח את הקובץ בדפדפן אחר או מעודכן יותר.",(e.reason&&e.reason.message)||String(e.reason||""));});
-(function(){try{var c=document.createElement("canvas");if(!(window.WebGLRenderingContext&&(c.getContext("webgl2")||c.getContext("webgl"))))window.__fail("המחשב הזה לא מציג גרפיקה תלת־ממדית","המשחק צריך גרפיקה תלת־ממדית, והדפדפן או כרטיס המסך כאן לא מאפשרים אותה. מה אפשר לעשות: לעדכן את הדפדפן, ובהגדרות שלו לוודא שהאצת החומרה מופעלת.","");}catch(e){}})();
+(function(){try{var c=document.createElement("canvas");if(window.WebGLRenderingContext&&(c.getContext("webgl2")||c.getContext("webgl")))return;
+var ua=navigator.userAgent,how=/Edg\//.test(ua)?"בדפדפן הזה: שלוש הנקודות למעלה ← הגדרות ← מערכת וביצועים ← להדליק את \"השתמש בהאצת גרפיקה כאשר היא זמינה\" ← ללחוץ \"הפעל מחדש\".":/Firefox\//.test(ua)?"בדפדפן הזה: התפריט ← הגדרות ← כללי ← ביצועים ← להוריד את הסימון מ\"השתמש בהגדרות ביצועים מומלצות\" ולסמן \"השתמש בהאצת חומרה כאשר זמינה\" ← לסגור ולפתוח את הדפדפן.":/Chrome\//.test(ua)?"בדפדפן הזה: שלוש הנקודות למעלה ← הגדרות ← מערכת ← להדליק את \"שימוש בהאצת גרפיקה כשהיא זמינה\" ← ללחוץ \"הפעלה מחדש\".":"בהגדרות הדפדפן, בחלק של המערכת או הביצועים, להדליק את האצת הגרפיקה (האצת החומרה) ולפתוח את הדפדפן מחדש.";
+window.__fail("הדפדפן לא מאפשר כאן גרפיקה תלת־ממדית","כמעט תמיד הסיבה היא שהאצת הגרפיקה בדפדפן כבויה.\n"+how+"\nאם היא כבר דולקת: לעדכן את הדפדפן, או לנסות לפתוח את הקובץ בדפדפן אחר. במחשבים ישנים מאוד כרטיס המסך חסום, ואז זה לא יעבוד.","");}catch(e){}})();
 document.addEventListener("DOMContentLoaded",function(){setTimeout(function(){if(window.__ready||window.__failed)return;var s=document.getElementById("lpct");if(s)s.textContent="זה לוקח יותר מהרגיל. במחשבים חלשים העלייה הראשונה יכולה לקחת עד דקה.";},40000);});
 </script>
 <noscript><div id="noscript"><b>טירת הצללים</b><p>הקובץ נפתח בתוכנה שלא מריצה משחקים, למשל תצוגה מקדימה של קבצים בטלפון או במייל.</p><p>כדי לשחק: שומרים את הקובץ, ופותחים אותו בדפדפן אינטרנט רגיל.</p></div></noscript>
